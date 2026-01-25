@@ -17,9 +17,9 @@ export default defineConfig(({ mode }) => ({
       registerType: "autoUpdate",
       includeAssets: ["favicon.ico", "apple-touch-icon.png", "mask-icon.svg"],
       manifest: {
-        name: "Bunker Buddies Golf Club",
-        short_name: "Bunker Buddies",
-        description: "Golf club tee times, members, and announcements management",
+        name: "Samba",
+        short_name: "Samba",
+        description: "Tee times, members, and announcements management",
         theme_color: "#2F5233",
         background_color: "#ffffff",
         display: "standalone",

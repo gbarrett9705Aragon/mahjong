@@ -18,7 +18,7 @@ const Index = () => {
         
         <div className="relative z-10 container mx-auto px-4 text-center">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground mb-4 md:mb-6 px-4">
-            Welcome to Our Golf Club
+            Welcome to Samba
           </h1>
           <p className="text-lg sm:text-xl md:text-2xl text-primary-foreground/90 mb-6 md:mb-8 max-w-2xl mx-auto px-4">
             Join our community of passionate golfers and reserve your tee times today
@@ -45,7 +45,7 @@ const Index = () => {
           <div className="text-center mb-8">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Quick Access</h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Stay connected with our club community
+              Stay connected with the Samba community
             </p>
           </div>
           
@@ -119,7 +119,7 @@ const Index = () => {
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Join?</h2>
           <p className="text-muted-foreground text-lg mb-8 max-w-2xl mx-auto">
-            Become part of our golf community today and start enjoying exclusive benefits
+            Become part of Samba today and start enjoying exclusive benefits
           </p>
           <Button asChild size="lg">
             <Link to="/join">
