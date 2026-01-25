@@ -10,7 +10,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           <div className="flex items-center justify-between h-16">
             <Link to="/" className="flex items-center gap-2">
               <CircleDot className="h-8 w-8 text-primary-foreground" />
-              <span className="text-xl font-bold text-primary-foreground">Bunker Buddies</span>
+              <span className="text-xl font-bold text-primary-foreground">Samba</span>
             </Link>
             
             <Button asChild variant="secondary" size="sm">
@@ -29,7 +29,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       
       <footer className="bg-muted py-8 mt-16">
         <div className="container mx-auto px-4 text-center">
-          <p className="text-muted-foreground">© 2025 Golf Club. All rights reserved.</p>
+          <p className="text-muted-foreground">© 2025 Samba. All rights reserved.</p>
         </div>
       </footer>
     </div>
