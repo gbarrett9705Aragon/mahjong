@@ -58,6 +58,7 @@ export type Database = {
           handicap: number | null
           id: string
           last_name: string
+          member_type: Database["public"]["Enums"]["member_type"]
           notes: string | null
           photo_url: string | null
           telephone: string | null
@@ -69,6 +70,7 @@ export type Database = {
           handicap?: number | null
           id?: string
           last_name: string
+          member_type?: Database["public"]["Enums"]["member_type"]
           notes?: string | null
           photo_url?: string | null
           telephone?: string | null
@@ -80,6 +82,7 @@ export type Database = {
           handicap?: number | null
           id?: string
           last_name?: string
+          member_type?: Database["public"]["Enums"]["member_type"]
           notes?: string | null
           photo_url?: string | null
           telephone?: string | null
@@ -91,24 +94,34 @@ export type Database = {
           created_at: string | null
           id: string
           player_id: string
+          subbing_for_player_id: string | null
           tee_time_id: string
         }
         Insert: {
           created_at?: string | null
           id?: string
           player_id: string
+          subbing_for_player_id?: string | null
           tee_time_id: string
         }
         Update: {
           created_at?: string | null
           id?: string
           player_id?: string
+          subbing_for_player_id?: string | null
           tee_time_id?: string
         }
         Relationships: [
           {
             foreignKeyName: "tee_time_signups_player_id_fkey"
             columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tee_time_signups_subbing_for_player_id_fkey"
+            columns: ["subbing_for_player_id"]
             isOneToOne: false
             referencedRelation: "players"
             referencedColumns: ["id"]
@@ -182,6 +195,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "user"
+      member_type: "regular" | "sub"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -310,6 +324,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "user"],
+      member_type: ["regular", "sub"],
     },
   },
 } as const

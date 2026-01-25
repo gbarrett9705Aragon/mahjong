@@ -10,6 +10,8 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 import { Plus, Pencil, Upload } from "lucide-react";
 import { format, parse } from "date-fns";
 
@@ -31,6 +33,7 @@ const Admin = () => {
     telephone: "",
     handicap: "",
     notes: "",
+    member_type: "regular" as "regular" | "sub",
   });
   const [newPlayerPhoto, setNewPlayerPhoto] = useState<File | null>(null);
   const [newPlayerPhotoPreview, setNewPlayerPhotoPreview] = useState<string | null>(null);
@@ -173,6 +176,7 @@ const Admin = () => {
     const playerData: any = {
       first_name: newPlayer.first_name,
       last_name: newPlayer.last_name,
+      member_type: newPlayer.member_type,
     };
 
     if (newPlayer.email) playerData.email = newPlayer.email;
@@ -201,6 +205,7 @@ const Admin = () => {
         telephone: "",
         handicap: "",
         notes: "",
+        member_type: "regular",
       });
       setNewPlayerPhoto(null);
       setNewPlayerPhotoPreview(null);
@@ -374,6 +379,7 @@ const Admin = () => {
         handicap: editPlayer.handicap,
         notes: editPlayer.notes,
         photo_url: photoUrl,
+        member_type: editPlayer.member_type,
       })
       .eq("id", editPlayer.id);
 
@@ -614,6 +620,21 @@ const Admin = () => {
                         />
                       </div>
                       <div className="grid gap-2">
+                        <Label htmlFor="new-member-type">Member Type</Label>
+                        <Select 
+                          value={newPlayer.member_type} 
+                          onValueChange={(value: "regular" | "sub") => setNewPlayer({ ...newPlayer, member_type: value })}
+                        >
+                          <SelectTrigger id="new-member-type">
+                            <SelectValue placeholder="Select member type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="regular">Regular</SelectItem>
+                            <SelectItem value="sub">Sub</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="grid gap-2">
                         <Label htmlFor="new-photo">Photo</Label>
                         <div className="flex flex-col gap-4">
                           <div className="flex items-center gap-4">
@@ -679,6 +700,7 @@ const Admin = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Name</TableHead>
+                    <TableHead>Type</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -686,6 +708,11 @@ const Admin = () => {
                   {players.map((player) => (
                     <TableRow key={player.id}>
                       <TableCell>{player.first_name} {player.last_name}</TableCell>
+                      <TableCell>
+                        <Badge variant={player.member_type === 'regular' ? 'default' : 'secondary'}>
+                          {player.member_type === 'regular' ? 'Regular' : 'Sub'}
+                        </Badge>
+                      </TableCell>
                       <TableCell>
                         <div className="flex gap-2">
                           <Button
@@ -770,6 +797,21 @@ const Admin = () => {
                   value={editPlayer?.notes || ""}
                   onChange={(e) => setEditPlayer({ ...editPlayer, notes: e.target.value })}
                 />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="edit-member-type">Member Type</Label>
+                <Select 
+                  value={editPlayer?.member_type || "regular"} 
+                  onValueChange={(value) => setEditPlayer({ ...editPlayer, member_type: value })}
+                >
+                  <SelectTrigger id="edit-member-type">
+                    <SelectValue placeholder="Select member type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="regular">Regular</SelectItem>
+                    <SelectItem value="sub">Sub</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="edit-photo">Photo</Label>
