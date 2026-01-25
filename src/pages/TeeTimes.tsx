@@ -2,7 +2,10 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Calendar, Clock, UserPlus, UserMinus, Users } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Calendar, Clock, UserPlus, UserMinus, Users, ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { format, parse } from "date-fns";
@@ -12,6 +15,11 @@ interface Player {
   first_name: string;
   last_name: string;
   handicap: number | null;
+  member_type: 'regular' | 'sub';
+}
+
+interface SignupPlayer extends Player {
+  subbing_for?: Player | null;
 }
 
 interface TeeTime {
@@ -20,7 +28,7 @@ interface TeeTime {
   time: string;
   course: string;
   created_at: string;
-  signups?: Player[];
+  signups?: SignupPlayer[];
 }
 
 const TeeTimes = () => {
@@ -30,6 +38,10 @@ const TeeTimes = () => {
   const [selectedTeeTime, setSelectedTeeTime] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [removeDialogOpen, setRemoveDialogOpen] = useState(false);
+  const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
+  const [subbingForId, setSubbingForId] = useState<string>("");
+
+  const regularMembers = players.filter(p => p.member_type === 'regular');
 
   useEffect(() => {
     fetchData();
@@ -58,11 +70,20 @@ const TeeTimes = () => {
       .from("tee_time_signups")
       .select(`
         tee_time_id,
+        subbing_for_player_id,
         players (
           id,
           first_name,
           last_name,
-          handicap
+          handicap,
+          member_type
+        ),
+        subbing_for:subbing_for_player_id (
+          id,
+          first_name,
+          last_name,
+          handicap,
+          member_type
         )
       `);
 
@@ -75,7 +96,10 @@ const TeeTimes = () => {
       ...teeTime,
       signups: (signupsData || [])
         .filter((signup: any) => signup.tee_time_id === teeTime.id)
-        .map((signup: any) => signup.players)
+        .map((signup: any) => ({
+          ...signup.players,
+          subbing_for: signup.subbing_for
+        }))
         .filter(Boolean),
     }));
 
@@ -85,23 +109,29 @@ const TeeTimes = () => {
   const fetchPlayers = async () => {
     const { data, error } = await supabase
       .from("players")
-      .select("id, first_name, last_name, handicap")
+      .select("id, first_name, last_name, handicap, member_type")
       .order("last_name", { ascending: true });
 
     if (error) {
       console.error("Error fetching players:", error);
     } else {
-      setPlayers(data || []);
+      setPlayers((data || []) as Player[]);
     }
   };
 
-  const handleSignUp = async (playerId: string) => {
+  const handleSignUp = async (playerId: string, subbingForPlayerId?: string) => {
     if (!selectedTeeTime) return;
 
-    const { error } = await supabase.from("tee_time_signups").insert({
+    const insertData: any = {
       tee_time_id: selectedTeeTime,
       player_id: playerId,
-    });
+    };
+
+    if (subbingForPlayerId) {
+      insertData.subbing_for_player_id = subbingForPlayerId;
+    }
+
+    const { error } = await supabase.from("tee_time_signups").insert(insertData);
 
     if (error) {
       if (error.code === "23505") {
@@ -113,6 +143,8 @@ const TeeTimes = () => {
     } else {
       toast.success("Successfully signed up!");
       setDialogOpen(false);
+      setSelectedPlayer(null);
+      setSubbingForId("");
       fetchTeeTimes();
     }
   };
@@ -196,7 +228,11 @@ const TeeTimes = () => {
                     <div className="flex gap-2">
                       <Dialog open={dialogOpen && selectedTeeTime === teeTime.id} onOpenChange={(open) => {
                         setDialogOpen(open);
-                        if (!open) setSelectedTeeTime(null);
+                        if (!open) {
+                          setSelectedTeeTime(null);
+                          setSelectedPlayer(null);
+                          setSubbingForId("");
+                        }
                       }}>
                         <DialogTrigger asChild>
                           <Button
@@ -213,29 +249,90 @@ const TeeTimes = () => {
                         </DialogTrigger>
                         <DialogContent>
                           <DialogHeader>
-                            <DialogTitle>Select Member to Sign Up</DialogTitle>
+                            <DialogTitle>
+                              {selectedPlayer ? `Sign Up: ${selectedPlayer.first_name} ${selectedPlayer.last_name}` : "Select Member to Sign Up"}
+                            </DialogTitle>
                             <DialogDescription>
-                              Choose which member to sign up for this tee time
+                              {selectedPlayer 
+                                ? selectedPlayer.member_type === 'sub' 
+                                  ? "Select which regular member this sub is playing for"
+                                  : "Confirm signup for this member"
+                                : "Choose which member to sign up for this tee time"
+                              }
                             </DialogDescription>
                           </DialogHeader>
-                          <div className="grid gap-2 py-4 max-h-[400px] overflow-y-auto">
-                            {players.map((player) => (
-                              <Button
-                                key={player.id}
-                                variant="outline"
-                                onClick={() => handleSignUp(player.id)}
-                                className="justify-start"
+                          
+                          {!selectedPlayer ? (
+                            <div className="grid gap-2 py-4 max-h-[400px] overflow-y-auto">
+                              {players.map((player) => (
+                                <Button
+                                  key={player.id}
+                                  variant="outline"
+                                  onClick={() => {
+                                    if (player.member_type === 'sub') {
+                                      setSelectedPlayer(player);
+                                    } else {
+                                      handleSignUp(player.id);
+                                    }
+                                  }}
+                                  className="justify-start"
+                                >
+                                  <Users className="mr-2 h-4 w-4" />
+                                  {player.first_name} {player.last_name}
+                                  <Badge 
+                                    variant={player.member_type === 'regular' ? 'default' : 'secondary'} 
+                                    className="ml-2"
+                                  >
+                                    {player.member_type === 'regular' ? 'Regular' : 'Sub'}
+                                  </Badge>
+                                  {player.handicap !== null && (
+                                    <span className="ml-auto text-muted-foreground">
+                                      HCP: {player.handicap}
+                                    </span>
+                                  )}
+                                </Button>
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="py-4 space-y-4">
+                              <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                onClick={() => {
+                                  setSelectedPlayer(null);
+                                  setSubbingForId("");
+                                }}
+                                className="mb-2"
                               >
-                                <Users className="mr-2 h-4 w-4" />
-                                {player.first_name} {player.last_name}
-                                {player.handicap !== null && (
-                                  <span className="ml-auto text-muted-foreground">
-                                    HCP: {player.handicap}
-                                  </span>
-                                )}
+                                <ArrowLeft className="mr-2 h-4 w-4" />
+                                Back to members
                               </Button>
-                            ))}
-                          </div>
+                              
+                              <div className="space-y-2">
+                                <Label htmlFor="subbing-for">Who are you subbing for? *</Label>
+                                <Select value={subbingForId} onValueChange={setSubbingForId}>
+                                  <SelectTrigger id="subbing-for">
+                                    <SelectValue placeholder="Select a regular member" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {regularMembers.map((member) => (
+                                      <SelectItem key={member.id} value={member.id}>
+                                        {member.first_name} {member.last_name}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                              
+                              <Button 
+                                onClick={() => handleSignUp(selectedPlayer.id, subbingForId)}
+                                disabled={!subbingForId}
+                                className="w-full"
+                              >
+                                Confirm Sign Up
+                              </Button>
+                            </div>
+                          )}
                         </DialogContent>
                       </Dialog>
 
@@ -300,9 +397,16 @@ const TeeTimes = () => {
                             key={player.id}
                             className="flex items-center justify-between p-1.5 rounded-md bg-muted/50"
                           >
-                            <span className="text-sm">
-                              {player.first_name} {player.last_name}
-                            </span>
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm">
+                                {player.first_name} {player.last_name}
+                              </span>
+                              {player.member_type === 'sub' && player.subbing_for && (
+                                <span className="text-xs text-muted-foreground">
+                                  (subbing for {player.subbing_for.first_name} {player.subbing_for.last_name})
+                                </span>
+                              )}
+                            </div>
                             {player.handicap !== null && (
                               <span className="text-sm text-muted-foreground">
                                 HCP: {player.handicap}
