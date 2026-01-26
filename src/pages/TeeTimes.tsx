@@ -22,7 +22,7 @@ interface SignupPlayer extends Player {
   subbing_for?: Player | null;
 }
 
-interface TeeTime {
+interface GameSession {
   id: string;
   date: string;
   time: string;
@@ -32,10 +32,10 @@ interface TeeTime {
 }
 
 const TeeTimes = () => {
-  const [teeTimes, setTeeTimes] = useState<TeeTime[]>([]);
+  const [gameSessions, setGameSessions] = useState<GameSession[]>([]);
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedTeeTime, setSelectedTeeTime] = useState<string | null>(null);
+  const [selectedSession, setSelectedSession] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [removeDialogOpen, setRemoveDialogOpen] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
@@ -48,24 +48,24 @@ const TeeTimes = () => {
   }, []);
 
   const fetchData = async () => {
-    await Promise.all([fetchTeeTimes(), fetchPlayers()]);
+    await Promise.all([fetchGameSessions(), fetchPlayers()]);
     setLoading(false);
   };
 
-  const fetchTeeTimes = async () => {
-    // Fetch tee times
-    const { data: teeTimesData, error: teeTimesError } = await supabase
+  const fetchGameSessions = async () => {
+    // Fetch game sessions
+    const { data: sessionsData, error: sessionsError } = await supabase
       .from("tee_times")
       .select("*")
       .order("date", { ascending: true })
       .order("time", { ascending: true });
 
-    if (teeTimesError) {
-      console.error("Error fetching tee times:", teeTimesError);
+    if (sessionsError) {
+      console.error("Error fetching game sessions:", sessionsError);
       return;
     }
 
-    // Fetch signups with player details for all tee times
+    // Fetch signups with player details for all sessions
     const { data: signupsData, error: signupsError } = await supabase
       .from("tee_time_signups")
       .select(`
@@ -91,11 +91,11 @@ const TeeTimes = () => {
       console.error("Error fetching signups:", signupsError);
     }
 
-    // Combine tee times with their signups
-    const teeTimesWithSignups = (teeTimesData || []).map((teeTime) => ({
-      ...teeTime,
+    // Combine sessions with their signups
+    const sessionsWithSignups = (sessionsData || []).map((session) => ({
+      ...session,
       signups: (signupsData || [])
-        .filter((signup: any) => signup.tee_time_id === teeTime.id)
+        .filter((signup: any) => signup.tee_time_id === session.id)
         .map((signup: any) => ({
           ...signup.players,
           subbing_for: signup.subbing_for
@@ -103,7 +103,7 @@ const TeeTimes = () => {
         .filter(Boolean),
     }));
 
-    setTeeTimes(teeTimesWithSignups);
+    setGameSessions(sessionsWithSignups);
   };
 
   const fetchPlayers = async () => {
@@ -120,10 +120,10 @@ const TeeTimes = () => {
   };
 
   const handleSignUp = async (playerId: string, subbingForPlayerId?: string) => {
-    if (!selectedTeeTime) return;
+    if (!selectedSession) return;
 
     const insertData: any = {
-      tee_time_id: selectedTeeTime,
+      tee_time_id: selectedSession,
       player_id: playerId,
     };
 
@@ -135,7 +135,7 @@ const TeeTimes = () => {
 
     if (error) {
       if (error.code === "23505") {
-        toast.error("This player is already signed up for this tee time");
+        toast.error("This player is already signed up for this session");
       } else {
         console.error("Error signing up:", error);
         toast.error("Failed to sign up. Please try again.");
@@ -145,17 +145,17 @@ const TeeTimes = () => {
       setDialogOpen(false);
       setSelectedPlayer(null);
       setSubbingForId("");
-      fetchTeeTimes();
+      fetchGameSessions();
     }
   };
 
   const handleRemove = async (playerId: string) => {
-    if (!selectedTeeTime) return;
+    if (!selectedSession) return;
 
     const { error } = await supabase
       .from("tee_time_signups")
       .delete()
-      .eq("tee_time_id", selectedTeeTime)
+      .eq("tee_time_id", selectedSession)
       .eq("player_id", playerId);
 
     if (error) {
@@ -164,7 +164,7 @@ const TeeTimes = () => {
     } else {
       toast.success("Successfully removed!");
       setRemoveDialogOpen(false);
-      fetchTeeTimes();
+      fetchGameSessions();
     }
   };
 
@@ -172,7 +172,7 @@ const TeeTimes = () => {
     return (
       <div className="container mx-auto px-4 py-8 md:py-12">
         <div className="max-w-4xl mx-auto text-center">
-          <p className="text-muted-foreground">Loading tee times...</p>
+          <p className="text-muted-foreground">Loading game sessions...</p>
         </div>
       </div>
     );
@@ -182,54 +182,54 @@ const TeeTimes = () => {
     <div className="container mx-auto px-4 py-8 md:py-12">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8 md:mb-12">
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">Upcoming Tee Times</h1>
+          <h1 className="text-3xl md:text-4xl font-bold mb-4">Upcoming Game Sessions</h1>
           <p className="text-muted-foreground text-lg">
-            Browse available tee times at SCP Golf Course
+            Browse available Samba sessions
           </p>
         </div>
 
         <div className="space-y-6">
-          {teeTimes.length === 0 ? (
+          {gameSessions.length === 0 ? (
             <Card className="shadow-card bg-gradient-card">
               <CardContent className="py-12 text-center">
-                <p className="text-muted-foreground">No tee times available at the moment.</p>
+                <p className="text-muted-foreground">No game sessions available at the moment.</p>
               </CardContent>
             </Card>
           ) : (
-            teeTimes.map((teeTime) => (
-              <Card key={teeTime.id} className="shadow-card bg-gradient-card">
+            gameSessions.map((session) => (
+              <Card key={session.id} className="shadow-card bg-gradient-card">
                 <CardHeader>
                   <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
                     <div className="flex-1">
-                      <CardTitle className="text-xl md:text-2xl mb-2">{teeTime.course}</CardTitle>
+                      <CardTitle className="text-xl md:text-2xl mb-2">{session.course}</CardTitle>
                         <div className="text-base">
                           <div className="flex flex-col gap-2 mt-2">
                             <div className="flex items-center gap-2">
                               <Calendar className="h-4 w-4" />
-                              {teeTime.date
-                                ? format(new Date(`${teeTime.date}T00:00:00`), 'EEEE, MMMM d, yyyy')
-                                : teeTime.date}
+                              {session.date
+                                ? format(new Date(`${session.date}T00:00:00`), 'EEEE, MMMM d, yyyy')
+                                : session.date}
                             </div>
                             <div className="flex items-center gap-2">
                               <Clock className="h-4 w-4" />
-                              {teeTime.time 
+                              {session.time 
                                 ? (() => {
-                                    const [hours, minutes] = teeTime.time.split(':');
+                                    const [hours, minutes] = session.time.split(':');
                                     const hour = parseInt(hours);
                                     const period = hour >= 12 ? 'PM' : 'AM';
                                     const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
                                     return `${displayHour}:${minutes} ${period}`;
                                   })()
-                                : teeTime.time}
+                                : session.time}
                             </div>
                           </div>
                         </div>
                     </div>
                     <div className="flex gap-2">
-                      <Dialog open={dialogOpen && selectedTeeTime === teeTime.id} onOpenChange={(open) => {
+                      <Dialog open={dialogOpen && selectedSession === session.id} onOpenChange={(open) => {
                         setDialogOpen(open);
                         if (!open) {
-                          setSelectedTeeTime(null);
+                          setSelectedSession(null);
                           setSelectedPlayer(null);
                           setSubbingForId("");
                         }
@@ -239,7 +239,7 @@ const TeeTimes = () => {
                             variant="secondary"
                             size="sm"
                             onClick={() => {
-                              setSelectedTeeTime(teeTime.id);
+                              setSelectedSession(session.id);
                               setDialogOpen(true);
                             }}
                           >
@@ -257,7 +257,7 @@ const TeeTimes = () => {
                                 ? selectedPlayer.member_type === 'sub' 
                                   ? "Select which regular member this sub is playing for"
                                   : "Confirm signup for this member"
-                                : "Choose which member to sign up for this tee time"
+                                : "Choose which member to sign up for this session"
                               }
                             </DialogDescription>
                           </DialogHeader>
@@ -336,19 +336,19 @@ const TeeTimes = () => {
                         </DialogContent>
                       </Dialog>
 
-                      <Dialog open={removeDialogOpen && selectedTeeTime === teeTime.id} onOpenChange={(open) => {
+                      <Dialog open={removeDialogOpen && selectedSession === session.id} onOpenChange={(open) => {
                         setRemoveDialogOpen(open);
-                        if (!open) setSelectedTeeTime(null);
+                        if (!open) setSelectedSession(null);
                       }}>
                         <DialogTrigger asChild>
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={() => {
-                              setSelectedTeeTime(teeTime.id);
+                              setSelectedSession(session.id);
                               setRemoveDialogOpen(true);
                             }}
-                            disabled={!teeTime.signups || teeTime.signups.length === 0}
+                            disabled={!session.signups || session.signups.length === 0}
                           >
                             <UserMinus className="mr-2 h-4 w-4" />
                             Remove
@@ -358,11 +358,11 @@ const TeeTimes = () => {
                           <DialogHeader>
                             <DialogTitle>Select Member to Remove</DialogTitle>
                             <DialogDescription>
-                              Choose which member to remove from this tee time
+                              Choose which member to remove from this session
                             </DialogDescription>
                           </DialogHeader>
                           <div className="grid gap-2 py-4 max-h-[400px] overflow-y-auto">
-                            {teeTime.signups?.map((player) => (
+                            {session.signups?.map((player) => (
                               <Button
                                 key={player.id}
                                 variant="outline"
@@ -384,15 +384,15 @@ const TeeTimes = () => {
                     </div>
                   </div>
                 </CardHeader>
-                {teeTime.signups && teeTime.signups.length > 0 && (
+                {session.signups && session.signups.length > 0 && (
                   <CardContent>
                     <div className="space-y-1">
                       <h3 className="font-semibold flex items-center gap-2 text-sm">
                         <Users className="h-4 w-4" />
-                        Signed Up Members ({teeTime.signups.length})
+                        Signed Up Members ({session.signups.length})
                       </h3>
                       <div className="grid gap-1">
-                        {teeTime.signups.map((player) => (
+                        {session.signups.map((player) => (
                           <div
                             key={player.id}
                             className="flex items-center justify-between p-1.5 rounded-md bg-muted/50"

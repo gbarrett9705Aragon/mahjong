@@ -40,7 +40,7 @@ const Admin = () => {
   const [newTeeTime, setNewTeeTime] = useState({
     date: "",
     time: "",
-    course: "SCP",
+    course: "",
   });
   const [newAnnouncement, setNewAnnouncement] = useState("");
   const [newCalendarAttachment, setNewCalendarAttachment] = useState("");
@@ -227,7 +227,7 @@ const Admin = () => {
     const { error } = await supabase.from("tee_times").insert({
       date: newTeeTime.date,
       time: newTeeTime.time,
-      course: newTeeTime.course,
+      course: newTeeTime.course || "Samba Session",
     });
 
     if (error) {
@@ -239,12 +239,12 @@ const Admin = () => {
     } else {
       toast({
         title: "Success",
-        description: "Tee time added successfully",
+        description: "Session added successfully",
       });
       setNewTeeTime({
         date: "",
         time: "",
-        course: "SCP",
+        course: "",
       });
       setIsTeeTimeDialogOpen(false);
       await loadData();
@@ -409,7 +409,7 @@ const Admin = () => {
       .update({
         date: editTeeTime.date,
         time: editTeeTime.time,
-        course: editTeeTime.course,
+        course: editTeeTime.course || "Samba Session",
       })
       .eq("id", editTeeTime.id);
 
@@ -422,7 +422,7 @@ const Admin = () => {
     } else {
       toast({
         title: "Success",
-        description: "Tee time updated successfully",
+        description: "Session updated successfully",
       });
       setEditTeeTime(null);
       await loadData();
@@ -534,7 +534,7 @@ const Admin = () => {
       <Tabs defaultValue="players" className="w-full">
         <TabsList className="grid w-full grid-cols-2 gap-2 mb-4 bg-[#F5F0E8]">
           <TabsTrigger value="players" className="data-[state=active]:bg-[#F5F0E8] data-[state=inactive]:bg-[#F5F0E8]">Players</TabsTrigger>
-          <TabsTrigger value="teetimes" className="data-[state=active]:bg-[#F5F0E8] data-[state=inactive]:bg-[#F5F0E8]">Tee Times</TabsTrigger>
+          <TabsTrigger value="teetimes" className="data-[state=active]:bg-[#F5F0E8] data-[state=inactive]:bg-[#F5F0E8]">Sessions</TabsTrigger>
           <TabsTrigger value="announcements" className="data-[state=active]:bg-[#F5F0E8] data-[state=inactive]:bg-[#F5F0E8]">Announcements</TabsTrigger>
           <TabsTrigger value="calendar" className="data-[state=active]:bg-[#F5F0E8] data-[state=inactive]:bg-[#F5F0E8]">Calendar</TabsTrigger>
         </TabsList>
@@ -882,21 +882,21 @@ const Admin = () => {
           <div className="space-y-6">
             <div className="flex justify-between items-center">
               <div>
-                <h2 className="text-2xl font-bold">Tee Times</h2>
-                <p className="text-muted-foreground">Manage tee time records</p>
+                <h2 className="text-2xl font-bold">Game Sessions</h2>
+                <p className="text-muted-foreground">Manage session records</p>
               </div>
               <Dialog open={isTeeTimeDialogOpen} onOpenChange={setIsTeeTimeDialogOpen}>
                 <DialogTrigger asChild>
                   <Button>
                     <Plus className="h-4 w-4 mr-2" />
-                    Add Tee Time
+                    Add Session
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="max-h-[90vh] overflow-y-auto">
                   <DialogHeader>
-                    <DialogTitle>Add New Tee Time</DialogTitle>
+                    <DialogTitle>Add New Session</DialogTitle>
                     <DialogDescription>
-                      Create a new tee time record
+                      Create a new session record
                     </DialogDescription>
                   </DialogHeader>
                   <div className="grid gap-4 py-4">
@@ -921,17 +921,17 @@ const Admin = () => {
                       />
                     </div>
                     <div className="grid gap-2">
-                      <Label htmlFor="new-course">Course</Label>
+                      <Label htmlFor="new-course">Venue</Label>
                       <Input
                         id="new-course"
                         value={newTeeTime.course}
                         onChange={(e) => setNewTeeTime({ ...newTeeTime, course: e.target.value })}
-                        placeholder="Enter course name"
+                        placeholder="e.g., Amenity Center, Jane's House"
                       />
                     </div>
                   </div>
                   <DialogFooter>
-                    <Button onClick={handleAddTeeTime}>Add Tee Time</Button>
+                    <Button onClick={handleAddTeeTime}>Add Session</Button>
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
@@ -990,12 +990,12 @@ const Admin = () => {
           </div>
         </TabsContent>
 
-        {/* Edit Tee Time Dialog */}
+        {/* Edit Session Dialog */}
         <Dialog open={!!editTeeTime} onOpenChange={(open) => !open && setEditTeeTime(null)}>
           <DialogContent className="max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Edit Tee Time</DialogTitle>
-              <DialogDescription>Update tee time information</DialogDescription>
+              <DialogTitle>Edit Session</DialogTitle>
+              <DialogDescription>Update session information</DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
@@ -1019,11 +1019,12 @@ const Admin = () => {
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="edit-course">Course</Label>
+                <Label htmlFor="edit-course">Venue</Label>
                 <Input
                   id="edit-course"
                   value={editTeeTime?.course || ""}
                   onChange={(e) => setEditTeeTime({ ...editTeeTime, course: e.target.value })}
+                  placeholder="e.g., Amenity Center, Jane's House"
                 />
               </div>
             </div>

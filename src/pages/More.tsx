@@ -28,7 +28,7 @@ const More = () => {
       
       <div className="text-center mt-8">
         <Button asChild variant="outline" size="sm">
-          <Link to="/">Back to Tee Times</Link>
+          <Link to="/">Back to Game Sessions</Link>
         </Button>
       </div>
     </div>
