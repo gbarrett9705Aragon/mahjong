@@ -13,15 +13,15 @@ const AddTeeTime = () => {
   const [formData, setFormData] = useState({
     date: "",
     time: "",
-    course: "SCP",
+    course: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.date || !formData.time || !formData.course) {
-      toast.error("Please fill in all required fields");
+    if (!formData.date || !formData.time) {
+      toast.error("Please fill in date and time");
       return;
     }
 
@@ -30,16 +30,16 @@ const AddTeeTime = () => {
     const { error } = await supabase.from("tee_times").insert({
       date: formData.date,
       time: formData.time,
-      course: formData.course,
+      course: formData.course || "Samba Session",
     });
 
     setIsSubmitting(false);
 
     if (error) {
-      console.error("Error adding tee time:", error);
-      toast.error("Failed to add tee time. Please try again.");
+      console.error("Error adding session:", error);
+      toast.error("Failed to add session. Please try again.");
     } else {
-      toast.success("Tee time added successfully!");
+      toast.success("Session added successfully!");
       navigate("/");
     }
   };
@@ -58,17 +58,17 @@ const AddTeeTime = () => {
           <div className="inline-flex items-center justify-center w-16 h-16 bg-primary rounded-full mb-4">
             <Calendar className="h-8 w-8 text-primary-foreground" />
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">Add New Tee Time</h1>
+          <h1 className="text-3xl md:text-4xl font-bold mb-4">Add New Session</h1>
           <p className="text-muted-foreground text-lg">
-            Schedule a new tee time for the golf club
+            Schedule a new Samba session for the club
           </p>
         </div>
 
         <Card className="shadow-card bg-gradient-card">
           <CardHeader>
-            <CardTitle>Tee Time Details</CardTitle>
+            <CardTitle>Session Details</CardTitle>
             <CardDescription>
-              Enter the date, time, and course information
+              Enter the date, time, and venue information
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -96,12 +96,12 @@ const AddTeeTime = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="course">Course *</Label>
+                <Label htmlFor="course">Venue</Label>
                 <Input
                   id="course"
                   name="course"
                   type="text"
-                  placeholder="SCP"
+                  placeholder="e.g., Amenity Center, Jane's House"
                   value={formData.course}
                   onChange={handleChange}
                 />
@@ -117,7 +117,7 @@ const AddTeeTime = () => {
                   Cancel
                 </Button>
                 <Button type="submit" className="flex-1" disabled={isSubmitting}>
-                  {isSubmitting ? "Adding..." : "Add Tee Time"}
+                  {isSubmitting ? "Adding..." : "Add Session"}
                 </Button>
               </div>
             </form>
