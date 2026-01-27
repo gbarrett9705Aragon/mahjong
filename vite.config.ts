@@ -19,7 +19,7 @@ export default defineConfig(({ mode }) => ({
       manifest: {
         name: "Samba",
         short_name: "Samba",
-        description: "Tee times, members, and announcements management",
+        description: "Samba card game sessions, members, and announcements",
         theme_color: "#2F5233",
         background_color: "#ffffff",
         display: "standalone",
