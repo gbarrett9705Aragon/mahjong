@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 
@@ -11,6 +12,7 @@ const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -27,6 +29,14 @@ const Auth = () => {
         });
 
         if (error) throw error;
+
+        // If "Remember Me" is not checked, set session to expire when browser closes
+        if (!rememberMe) {
+          // Store a flag to clear session on browser close
+          sessionStorage.setItem("clearSessionOnClose", "true");
+        } else {
+          sessionStorage.removeItem("clearSessionOnClose");
+        }
 
         toast({
           title: "Welcome back!",
@@ -97,6 +107,18 @@ const Auth = () => {
                 minLength={6}
               />
             </div>
+            {isLogin && (
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="remember-me"
+                  checked={rememberMe}
+                  onCheckedChange={(checked) => setRememberMe(checked === true)}
+                />
+                <Label htmlFor="remember-me" className="text-sm font-normal cursor-pointer">
+                  Remember me
+                </Label>
+              </div>
+            )}
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Loading..." : isLogin ? "Login" : "Sign Up"}
             </Button>
