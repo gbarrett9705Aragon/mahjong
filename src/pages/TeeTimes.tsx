@@ -5,10 +5,10 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Clock, UserPlus, UserMinus, Users, ArrowLeft } from "lucide-react";
+import { Calendar, Clock, UserPlus, UserMinus, Users, ArrowLeft, Bell } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { format, parse } from "date-fns";
+import { format } from "date-fns";
 
 interface Player {
   id: string;
@@ -31,8 +31,15 @@ interface GameSession {
   signups?: SignupPlayer[];
 }
 
+interface Announcement {
+  id: string;
+  notes: string;
+  created_at: string | null;
+}
+
 const TeeTimes = () => {
   const [gameSessions, setGameSessions] = useState<GameSession[]>([]);
+  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedSession, setSelectedSession] = useState<string | null>(null);
@@ -48,8 +55,21 @@ const TeeTimes = () => {
   }, []);
 
   const fetchData = async () => {
-    await Promise.all([fetchGameSessions(), fetchPlayers()]);
+    await Promise.all([fetchGameSessions(), fetchPlayers(), fetchAnnouncements()]);
     setLoading(false);
+  };
+
+  const fetchAnnouncements = async () => {
+    const { data, error } = await supabase
+      .from("announcements")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching announcements:", error);
+    } else {
+      setAnnouncements(data || []);
+    }
   };
 
   const fetchGameSessions = async () => {
@@ -188,6 +208,31 @@ const TeeTimes = () => {
             Browse available Samba sessions
           </p>
         </div>
+
+        {announcements.length > 0 && (
+          <div className="mb-8">
+            <Card className="border-primary/20 bg-primary/5">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Bell className="h-5 w-5 text-primary" />
+                  Announcements
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {announcements.map((announcement) => (
+                  <div key={announcement.id} className="border-l-2 border-primary pl-3">
+                    <p className="text-sm whitespace-pre-wrap">{announcement.notes}</p>
+                    {announcement.created_at && (
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {format(new Date(announcement.created_at), 'MMM d, yyyy')}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
         <div className="space-y-6">
           {gameSessions.length === 0 ? (
