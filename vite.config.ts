@@ -20,7 +20,7 @@ export default defineConfig(({ mode }) => ({
         name: "Samba",
         short_name: "Samba",
         description: "Samba card game sessions, members, and announcements",
-        theme_color: "#2F5233",
+        theme_color: "#9E5A6C",
         background_color: "#ffffff",
         display: "standalone",
         icons: [
