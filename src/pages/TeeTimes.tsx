@@ -66,19 +66,20 @@ const TeeTimes = () => {
     }
 
     // Fetch signups with player details for all sessions
+    // Use explicit foreign key to disambiguate the players relationship
     const { data: signupsData, error: signupsError } = await supabase
       .from("tee_time_signups")
       .select(`
         tee_time_id,
         subbing_for_player_id,
-        players (
+        players!tee_time_signups_player_id_fkey (
           id,
           first_name,
           last_name,
           handicap,
           member_type
         ),
-        subbing_for:subbing_for_player_id (
+        subbing_for:players!tee_time_signups_subbing_for_player_id_fkey (
           id,
           first_name,
           last_name,
