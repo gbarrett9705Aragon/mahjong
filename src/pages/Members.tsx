@@ -26,7 +26,7 @@ const Members = () => {
     const { data, error } = await supabase
       .from("players")
       .select("*")
-      .order("last_name", { ascending: true });
+      .order("first_name", { ascending: true });
 
   if (error) {
     console.error("Error fetching members:", error);
