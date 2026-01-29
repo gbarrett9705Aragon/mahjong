@@ -103,7 +103,7 @@ const Admin = () => {
 
   const loadData = async () => {
     const [playersData, teeTimesData, announcementsData, calendarData] = await Promise.all([
-      supabase.from("players").select("*").order("created_at", { ascending: false }),
+      supabase.from("players").select("*").order("first_name", { ascending: true }),
       supabase.from("tee_times").select("*").order("date", { ascending: false }),
       supabase.from("announcements").select("*").order("created_at", { ascending: false }),
       supabase.from("calendar").select("*").order("created_at", { ascending: false }),
