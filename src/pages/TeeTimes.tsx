@@ -131,7 +131,7 @@ const TeeTimes = () => {
     const { data, error } = await supabase
       .from("players")
       .select("id, first_name, last_name, handicap, member_type")
-      .order("last_name", { ascending: true });
+      .order("first_name", { ascending: true });
 
     if (error) {
       console.error("Error fetching players:", error);
