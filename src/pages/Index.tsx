@@ -10,14 +10,14 @@ const Index = () => {
         <div className="absolute inset-0">
           <img
             src={heroImage}
-            alt="Samba Card Game"
+            alt="Bunco Card Game"
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-primary/90 to-primary/70" />
         </div>
         
         <div className="relative z-10 text-center text-primary-foreground px-4 max-w-4xl mx-auto">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">Welcome to Samba</h1>
+          <h1 className="text-4xl md:text-6xl font-bold mb-6">Welcome to Bunco</h1>
           <p className="text-xl md:text-2xl mb-8 opacity-90">
             Join our community of passionate card players and reserve your game sessions today
           </p>
@@ -40,7 +40,7 @@ const Index = () => {
 
       <section className="container mx-auto px-4 py-16 md:py-24">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Why Join Samba?</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Why Join Bunco?</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Experience the best card game community with easy session booking and member benefits
           </p>
@@ -73,7 +73,7 @@ const Index = () => {
             </div>
             <h3 className="text-xl font-bold mb-3">Vibrant Community</h3>
             <p className="text-muted-foreground">
-              Connect with fellow Samba enthusiasts and build lasting friendships
+              Connect with fellow Bunco enthusiasts and build lasting friendships
             </p>
           </div>
           
@@ -91,7 +91,7 @@ const Index = () => {
 
       <section className="bg-muted py-16 md:py-24">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Join Our Samba Club</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Join Our Bunco Club</h2>
           <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
             Become a member and enjoy exclusive access to our game sessions and events
           </p>

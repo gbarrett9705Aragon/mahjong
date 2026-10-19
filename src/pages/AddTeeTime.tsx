@@ -30,7 +30,7 @@ const AddTeeTime = () => {
     const { error } = await supabase.from("tee_times").insert({
       date: formData.date,
       time: formData.time,
-      course: formData.course || "Samba Session",
+      course: formData.course || "Bunco Session",
     });
 
     setIsSubmitting(false);
@@ -60,7 +60,7 @@ const AddTeeTime = () => {
           </div>
           <h1 className="text-3xl md:text-4xl font-bold mb-4">Add New Session</h1>
           <p className="text-muted-foreground text-lg">
-            Schedule a new Samba session for the club
+            Schedule a new Bunco session for the club
           </p>
         </div>
 
