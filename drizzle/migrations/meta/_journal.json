@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1792400088646,
+      "tag": "0000_calendar_admin_writes",
+      "breakpoints": true
+    }
+  ]
+}
