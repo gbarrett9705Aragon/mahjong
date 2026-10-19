@@ -15,6 +15,13 @@
       "when": 1792400168174,
       "tag": "0001_admin_writes_players_announcements_sessions",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792400208413,
+      "tag": "0002_storage_admin_writes",
+      "breakpoints": true
     }
   ]
 }
