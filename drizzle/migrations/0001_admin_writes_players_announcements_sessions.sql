@@ -1,0 +1,16 @@
+DROP POLICY IF EXISTS "Anyone can delete players" ON public.players;
+DROP POLICY IF EXISTS "Anyone can update players" ON public.players;
+CREATE POLICY "Admins can update players" ON public.players FOR UPDATE TO authenticated USING (public.has_role(auth.uid(), 'admin')) WITH CHECK (public.has_role(auth.uid(), 'admin'));
+CREATE POLICY "Admins can delete players" ON public.players FOR DELETE TO authenticated USING (public.has_role(auth.uid(), 'admin'));
+DROP POLICY IF EXISTS "Anyone can delete announcements" ON public.announcements;
+DROP POLICY IF EXISTS "Anyone can insert announcements" ON public.announcements;
+DROP POLICY IF EXISTS "Anyone can update announcements" ON public.announcements;
+CREATE POLICY "Admins can insert announcements" ON public.announcements FOR INSERT TO authenticated WITH CHECK (public.has_role(auth.uid(), 'admin'));
+CREATE POLICY "Admins can update announcements" ON public.announcements FOR UPDATE TO authenticated USING (public.has_role(auth.uid(), 'admin')) WITH CHECK (public.has_role(auth.uid(), 'admin'));
+CREATE POLICY "Admins can delete announcements" ON public.announcements FOR DELETE TO authenticated USING (public.has_role(auth.uid(), 'admin'));
+DROP POLICY IF EXISTS "Anyone can delete tee times" ON public.tee_times;
+DROP POLICY IF EXISTS "Anyone can insert tee times" ON public.tee_times;
+DROP POLICY IF EXISTS "Anyone can update tee times" ON public.tee_times;
+CREATE POLICY "Admins can insert tee times" ON public.tee_times FOR INSERT TO authenticated WITH CHECK (public.has_role(auth.uid(), 'admin'));
+CREATE POLICY "Admins can update tee times" ON public.tee_times FOR UPDATE TO authenticated USING (public.has_role(auth.uid(), 'admin')) WITH CHECK (public.has_role(auth.uid(), 'admin'));
+CREATE POLICY "Admins can delete tee times" ON public.tee_times FOR DELETE TO authenticated USING (public.has_role(auth.uid(), 'admin'));
