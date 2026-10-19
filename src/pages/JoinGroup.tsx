@@ -60,17 +60,13 @@ const JoinGroup = () => {
 
       if (uploadError) {
         console.error("Error uploading photo:", uploadError);
-        toast.error("Failed to upload photo. Please try again.");
-        setIsSubmitting(false);
-        return;
+        toast.info("Photo couldn't be saved — an admin can add it later.");
+      } else {
+        const { data: { publicUrl } } = supabase.storage
+          .from('player-photos')
+          .getPublicUrl(fileName);
+        photoUrl = publicUrl;
       }
-
-      // Get public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from('player-photos')
-        .getPublicUrl(fileName);
-      
-      photoUrl = publicUrl;
     }
 
     const { error } = await supabase.from("players").insert({
