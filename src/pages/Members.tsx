@@ -57,7 +57,7 @@ const Members = () => {
         <div className="text-center mb-8 md:mb-12">
           <h1 className="text-3xl md:text-4xl font-bold mb-4">Club Members</h1>
           <p className="text-muted-foreground text-lg">
-            Meet our wonderful Samba community
+            Meet our wonderful Bunco community
           </p>
         </div>
 
