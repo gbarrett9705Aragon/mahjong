@@ -1,2 +1,0 @@
-DROP POLICY IF EXISTS "Anyone can upload player photos" ON storage.objects;
-CREATE POLICY "Admins can upload player photos" ON storage.objects FOR INSERT TO authenticated WITH CHECK (bucket_id = 'player-photos' AND public.has_role(auth.uid(), 'admin'));
