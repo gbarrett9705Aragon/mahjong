@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Calendar, UserPlus, Users, Trophy, Bell, CalendarDays } from "lucide-react";
 import { Link } from "react-router-dom";
-import heroImage from "@/assets/samba-hero.jpg";
+import heroImage from "@/assets/mahjong-hero.jpg";
 
 const Index = () => {
   return (
