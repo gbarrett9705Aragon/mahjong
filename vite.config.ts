@@ -17,9 +17,9 @@ export default defineConfig(({ mode }) => ({
       registerType: "autoUpdate",
       includeAssets: ["favicon.ico", "apple-touch-icon.png", "mask-icon.svg"],
       manifest: {
-        name: "Bunco",
-        short_name: "Bunco",
-        description: "Bunco card game sessions, members, and announcements",
+        name: "Mahjong",
+        short_name: "Mahjong",
+        description: "Mahjong game sessions, members, and announcements",
         theme_color: "#9E5A6C",
         background_color: "#ffffff",
         display: "standalone",

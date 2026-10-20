@@ -227,7 +227,7 @@ const Admin = () => {
     const { error } = await supabase.from("tee_times").insert({
       date: newTeeTime.date,
       time: newTeeTime.time,
-      course: newTeeTime.course || "Bunco Session",
+      course: newTeeTime.course || "Mahjong Session",
     });
 
     if (error) {
@@ -409,7 +409,7 @@ const Admin = () => {
       .update({
         date: editTeeTime.date,
         time: editTeeTime.time,
-        course: editTeeTime.course || "Bunco Session",
+        course: editTeeTime.course || "Mahjong Session",
       })
       .eq("id", editTeeTime.id);
 
