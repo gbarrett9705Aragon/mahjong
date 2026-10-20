@@ -10,7 +10,7 @@ const Index = () => {
         <div className="absolute inset-0">
           <img
             src={heroImage}
-            alt="Mahjong Card Game"
+            alt="Women playing Mahjong"
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-primary/90 to-primary/70" />
@@ -19,7 +19,7 @@ const Index = () => {
         <div className="relative z-10 text-center text-primary-foreground px-4 max-w-4xl mx-auto">
           <h1 className="text-4xl md:text-6xl font-bold mb-6">Welcome to Mahjong</h1>
           <p className="text-xl md:text-2xl mb-8 opacity-90">
-            Join our community of passionate card players and reserve your game sessions today
+            Join our community of passionate Mahjong players and reserve your game sessions today
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild size="lg" variant="hero">
@@ -42,7 +42,7 @@ const Index = () => {
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Why Join Mahjong?</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Experience the best card game community with easy session booking and member benefits
+            Experience the best Mahjong community with easy session booking and member benefits
           </p>
         </div>
 
