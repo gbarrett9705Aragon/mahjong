@@ -1,4 +1,4 @@
 # Roadmap
 
-- [ ] Replace welcome-page photo with a photo of Mahjong tiles (in progress)
-- [ ] Confirm the new photo actually renders on the welcome page
+- [x] Replace welcome-page photo with a photo of Mahjong tiles
+- [ ] Confirm the new photo renders on the welcome page (/about)
