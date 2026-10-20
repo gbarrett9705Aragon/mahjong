@@ -205,7 +205,7 @@ const TeeTimes = () => {
         <div className="text-center mb-8 md:mb-12">
           <h1 className="text-3xl md:text-4xl font-bold mb-4">Upcoming Game Sessions</h1>
           <p className="text-muted-foreground text-lg">
-            Browse available Bunco sessions
+            Browse available Mahjong sessions
           </p>
         </div>
 
