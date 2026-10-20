@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 
 const More = () => {
   const menuItems = [
+    { path: "/about", label: "Welcome" },
     { path: "/members", label: "Players" },
     { path: "/calendar", label: "Club Calendar" },
     { path: "/announcements", label: "Announcements" },
