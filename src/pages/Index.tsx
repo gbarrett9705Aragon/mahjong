@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Calendar, UserPlus, Users, Trophy, Bell, CalendarDays } from "lucide-react";
 import { Link } from "react-router-dom";
-import heroImage from "@/assets/samba-hero.jpg";
+import heroImage from "@/assets/mahjong-tiles-hero.jpg";
 
 const Index = () => {
   return (
@@ -10,7 +10,7 @@ const Index = () => {
         <div className="absolute inset-0">
           <img
             src={heroImage}
-            alt="Women playing Mahjong"
+            alt="Mahjong tiles on a wooden table"
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-primary/90 to-primary/70" />
